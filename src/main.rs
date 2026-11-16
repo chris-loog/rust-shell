@@ -260,6 +260,10 @@ fn run_external(cmd: &str, args: &[String], stdout: Option<File>, stderr: Option
     }
 
     match command.status() {
+        Ok(status) if !status.success() => match status.code() {
+            Some(code) => eprintln!("{cmd}: lõpetas koodiga {code}"),
+            None => eprintln!("{cmd}: katkestati signaaliga"),
+        },
         Ok(_) => {}
         Err(e) if e.kind() == io::ErrorKind::NotFound => eprintln!("{cmd}: käsku ei leitud"),
         Err(e) => eprintln!("{cmd}: {e}"),
